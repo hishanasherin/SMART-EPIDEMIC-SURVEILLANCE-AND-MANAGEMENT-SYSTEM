@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Care Clinic</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+            color: white;
+            padding: 30px 0;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #0056b3, #0094cc);
+        }
+
+        .section {
+            display: none;
+            margin: 20px auto;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        input, select, textarea {
+            width: 95%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Life Care Clinic</h1>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn" onclick="showSection('register')">Register Patient</button>
+        <button class="btn" onclick="showSection('view-patients'); fetchPatients();">View Patients</button>
+        <button class="btn" onclick="showSection('view-history'); fetchHistory();">Patient History</button>
+        <button class="btn" onclick="showSection('updates'); fetchOutbreaks();">Live Alerts</button>
+    </div>
+
+    <!-- Patient Registration Form -->
+    <div id="register" class="section active">
+        <h3>Register a New Patient</h3>
+        <form id="registration-form">
+            <div class="form-group"><input type="text" id="name" placeholder="Full Name" required></div>
+            <div class="form-group"><input type="number" id="age" placeholder="Age" required></div>
+            <div class="form-group">
+                <select id="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group"><input type="text" id="disease" placeholder="Disease Diagnosed" required></div>
+            <div class="form-group"><textarea id="symptoms" placeholder="Symptoms" required></textarea></div>
+            <button type="button" class="btn" onclick="addPatient()">Submit</button>
+        </form>
+    </div>
+
+    <!-- View Patients -->
+    <div id="view-patients" class="section">
+        <h3>Registered Patients</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Disease</th><th>Symptoms</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="patientsTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- View History -->
+    <div id="view-history" class="section">
+        <h3>Patient History</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Disease</th><th>Symptoms</th><th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Outbreak Alerts -->
+    <div id="updates" class="section">
+        <h3>Live Alerts</h3>
+        <ul id="outbreak-list"></ul>
+    </div>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+        
+
+        async function deletePatient(patientId) {
+            if (!confirm("Are you sure you want to delete this patient?")) return;
+
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/delete_patient/${patientId}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to delete patient");
+                }
+
+                const data = await response.json();
+                alert(data.message);
+                fetchPatients();  // Refresh patient list
+                fetchOutbreaks(); // Update outbreak alerts after deletion
+            } catch (error) {
+                console.error("❌ Error deleting patient:", error);
+                alert("Failed to delete patient.");
+            }
+        }
+
+        
+        async function addPatient() {
+    const name = document.getElementById("name").value.trim();
+    const age = document.getElementById("age").value.trim();
+    const gender = document.getElementById("gender").value;
+    const disease = document.getElementById("disease").value.trim();
+    const symptoms = document.getElementById("symptoms").value.trim();
+
+    if (!name || !age || !gender || !disease || !symptoms) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/add_patient", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, age: parseInt(age), gender, disease, symptoms })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        alert(`✅ ${data.message}`);
+
+        // Clear form after success
+        document.getElementById("registration-form").reset();
+
+        // Refresh patient list
+        fetchPatients();
+        fetchOutbreaks();
+
+    } catch (error) {
+        console.error("❌ Error:", error);
+        alert("❌ Failed to register patient.");
+    }
+}
+
+        async function fetchOutbreaks() {
+            try {
+                const res = await fetch("http://127.0.0.1:8000/outbreaks");
+                const data = await res.json();
+
+                const list = document.getElementById("outbreak-list");
+                list.innerHTML = "";
+
+                if (!data.outbreaks || data.outbreaks.length === 0) {
+                    list.innerHTML = "<li>No outbreaks detected</li>";
+                    return;
+                }
+
+                data.outbreaks.forEach(disease => {
+                    const li = document.createElement("li");
+                    li.textContent = `⚠️ Outbreak: ${disease}`;
+                    list.appendChild(li);
+                });
+
+            } catch (err) {
+                console.error("❌ Error fetching outbreaks:", err);
+            }
+        }
+
+        async function fetchPatients() {
+            try {
+                const res = await fetch("http://127.0.0.1:8000/patients");
+                const data = await res.json();
+                document.getElementById("patientsTableBody").innerHTML = data.map(p =>
+                    `<tr>
+                        <td>${p.id}</td><td>${p.name}</td><td>${p.age}</td><td>${p.gender}</td>
+                        <td>${p.disease}</td><td>${p.symptoms}</td>
+                        <td><button class="btn" onclick="deletePatient(${p.id})">Delete</button></td>
+                    </tr>`).join("");
+            } catch (err) {
+                console.error("Error fetching patients:", err);
+            }
+        }
+
+        window.onload = () => {
+            fetchPatients();
+            fetchOutbreaks();
+        };
+    </script>
+
+</body>
+</html>
