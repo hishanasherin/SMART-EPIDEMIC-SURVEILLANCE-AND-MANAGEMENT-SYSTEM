@@ -3,7 +3,7 @@
 
 A data-driven healthcare project designed to predict disease outbreaks, improve communication between hospitals and clinics, and provide real-time public alerts for faster epidemic response.
 
-📌 Project Overview
+📌 Project Overview:
 
 The Smart Epidemic Surveillance and Management System helps monitor disease spread by collecting patient disease data from hospitals and sharing it with clinics for early outbreak detection and public awareness.
 
@@ -87,9 +87,14 @@ Fast Containment of Infectious Diseases with E-Healthcare
 
 Disease Prediction by Machine Learning Over Big Data From Healthcare Communities
 
-🌟 Future Enhancements
+🌟 Future Enhancements:
+
 AI-based prediction improvements
+
 WhatsApp/SMS integration
+
 Government healthcare database integration
+
 Mobile application support
+
 Cloud-based real-time monitoring system
