@@ -9,7 +9,8 @@ The Smart Epidemic Surveillance and Management System helps monitor disease spre
 
 The system aims to improve epidemic management through faster communication, outbreak prediction, and alert mechanisms.
 
-🚀 Features
+🚀 Features:
+
 🏥 Collects disease data from hospitals
 🏪 Shares outbreak information with clinics
 📢 Sends public alerts for awareness and prevention
@@ -18,14 +19,16 @@ The system aims to improve epidemic management through faster communication, out
 🧾 Patient data entry and disease management
 🔄 Real-time communication workflow
 
-🎯 Objectives
+🎯 Objectives:
+
 Predict disease outbreaks early
 Reduce epidemic spread through fast alerts
 Improve coordination between hospitals and clinics
 Increase public awareness during outbreaks
 Support healthcare decision-making using data analysis
 
-🛠️ Technologies Used
+🛠️ Technologies Used:
+
 python
 HTML
 CSS
@@ -34,21 +37,24 @@ Local Storage / Database
 VS Code
 GitHub
 
-🔁 Workflow
+🔁 Workflow:
+
 Hospitals collect patient disease data
 Data is shared with clinics
 Clinics analyze outbreak situations
 Alerts and notifications are sent to the public
 Authorities take preventive action
 
-✅ Advantages
+✅ Advantages:
+
 Faster outbreak detection
 Real-time alerts and communication
 Better healthcare coordination
 Reduces manual monitoring effort
 Supports multiple disease tracking
 
-📚 Literature Survey References
+📚 Literature Survey References:
+
 Trends in Outbreak Detection Using Machine Learning
 COVID-19 Future Forecasting Using Machine Learning
 Fast Containment of Infectious Diseases with E-Healthcare
